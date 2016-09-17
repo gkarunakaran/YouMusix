@@ -14,4 +14,4 @@ This is a YouTube to MP3 player. You just need to provide a YouTube video URL an
 
  1. Add all the files present in lib directory to build path
  2. Export project as runnable JAR
- 3. Make sure the JAR file is set as executable
+ 3. Make sure the JAR file is set as executable (GNU/ Linux, MacOS etc.)
