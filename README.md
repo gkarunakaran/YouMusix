@@ -8,7 +8,7 @@ This is a YouTube to MP3 player. You just need to provide a YouTube video URL an
 * No video duration limits (0:10 - ∞)
 * Nice sound quality
 * Saves a lot of bandwitdh
-  More features comming soon..
+More features comming soon..
   
 ## Building:
 
