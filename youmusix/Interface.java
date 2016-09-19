@@ -35,17 +35,23 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
+import java.awt.Label;
 
 @SuppressWarnings("serial")
 public class Interface extends JFrame {
 
-	private JPanel contentPane;
-	private JTextField txtEnterUrl;
+	JPanel contentPane;
+	JTextField txtEnterUrl;
 	Thread thread;
-	Player mp3player;
-	JButton btnStop;
+	JButton btnStop, btnPause;
+	static Label ElapsedTime;
+	static Player mp3player;
+	static Runnable BackgroundThread;
+	static long millis;
+	static String hms;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -53,6 +59,26 @@ public class Interface extends JFrame {
 				try {
 					Interface frame = new Interface();
 					frame.setVisible(true);
+					BackgroundThread = new Runnable() {
+						public void run() {
+							try {
+								boolean temp = true;
+								while (temp == true) {
+									millis = 0;
+									millis = mp3player.getPosition();
+									hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
+											TimeUnit.MILLISECONDS.toMinutes(millis)
+													- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+											TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES
+													.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+									ElapsedTime.setText(hms);
+								}
+							} catch (Exception e1) {
+								System.out.println(e1);
+							}
+						}
+					};
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -61,9 +87,10 @@ public class Interface extends JFrame {
 	}
 
 	public Interface() {
+		setResizable(false);
 		setTitle("YouMusix");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 640, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -72,6 +99,7 @@ public class Interface extends JFrame {
 		JButton btnPlay = new JButton("Play");
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
 				thread = new Thread(new Runnable() {
 					@Override
 					public void run() {
@@ -81,6 +109,7 @@ public class Interface extends JFrame {
 						try {
 							in = new BufferedInputStream(new URL(song).openStream());
 							mp3player = new Player(in);
+							new Thread(BackgroundThread).start();
 							mp3player.play();
 							mp3player.close();
 							thread.interrupt();
@@ -92,22 +121,24 @@ public class Interface extends JFrame {
 				thread.start();
 			}
 		});
-		btnPlay.setBounds(12, 99, 117, 25);
+
+		btnPlay.setBounds(12, 75, 142, 25);
 		contentPane.add(btnPlay);
 
 		txtEnterUrl = new JTextField();
-		txtEnterUrl.setBounds(12, 12, 418, 19);
+		txtEnterUrl.setBounds(12, 12, 598, 19);
 		contentPane.add(txtEnterUrl);
 		txtEnterUrl.setColumns(10);
 
-		JButton btnPause = new JButton("Pause");
+		btnPause = new JButton("Pause");
 		btnPause.addActionListener(new ActionListener() {
+
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent arg0) {
 				thread.suspend();
 			}
 		});
-		btnPause.setBounds(155, 99, 117, 25);
+		btnPause.setBounds(166, 75, 142, 25);
 		contentPane.add(btnPause);
 
 		JButton btnResume = new JButton("Resume");
@@ -117,7 +148,7 @@ public class Interface extends JFrame {
 				thread.resume();
 			}
 		});
-		btnResume.setBounds(292, 99, 117, 25);
+		btnResume.setBounds(320, 75, 142, 25);
 		contentPane.add(btnResume);
 
 		btnStop = new JButton("Stop");
@@ -127,7 +158,12 @@ public class Interface extends JFrame {
 				thread.interrupt();
 			}
 		});
-		btnStop.setBounds(155, 155, 117, 25);
+		btnStop.setBounds(474, 75, 142, 25);
 		contentPane.add(btnStop);
+
+		ElapsedTime = new Label();
+		ElapsedTime.setAlignment(Label.CENTER);
+		ElapsedTime.setBounds(227, 37, 155, 21);
+		contentPane.add(ElapsedTime);
 	}
 }
