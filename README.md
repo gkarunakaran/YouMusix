@@ -5,7 +5,7 @@ This is a YouTube to MP3 player. You just need to provide a YouTube video URL an
 ## Features:
 
 * Easy to use
-* Video duration limit - Approx 1 hour
+* Video duration limit - Approx. 1 hour
 * Highest sound quality (Depends on Video)
 * Saves a lot of bandwitdh
 
