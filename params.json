@@ -1,6 +1,6 @@
 {
   "name": "YouMusix",
   "tagline": "Listen to latest music while saving bandwidth!",
-  "body": "# YouMusix\r\n\r\nThis is a YouTube to MP3 player. You just need to provide a YouTube video URL and this application will play it as MP3 for you.\r\n\r\n## Features:\r\n\r\n* Easy to use\r\n* Video duration limit - Approx. 1 hour\r\n* Highest sound quality (Depends on Video)\r\n* Saves a lot of bandwitdh\r\n\r\nMore features comming soon..\r\n\r\n## Building:\r\n\r\n 1. Add all the files present in lib directory to build path\r\n 2. Export project as runnable JAR\r\n 3. Make sure the JAR file is set as executable (GNU/ Linux, MacOS etc.)\r\n",
+  "body": "# YouMusix\r\n\r\nA YouTube to MP3 player. You just need to provide a YouTube video URL and this application will play it as MP3 for you. Listen to latest music while saving bandwidth!\r\n\r\n## Features:\r\n\r\n* Easy to use\r\n* Video duration limit - Approx. 1 hour\r\n* Highest sound quality (Depends on Video)\r\n* Saves a lot of bandwitdh\r\n\r\n  More features comming soon...\r\n\r\n## Building:\r\n\r\n1. Add all the files present in lib directory to build path\r\n2. Export project as runnable JAR\r\n3. Make sure the JAR file is set as executable (GNU/Linux, MacOS, BSD etc.)\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
