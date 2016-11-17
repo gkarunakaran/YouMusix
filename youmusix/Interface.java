@@ -26,27 +26,32 @@
 
 package youmusix;
 
+import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+import java.awt.event.ActionEvent;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javazoom.jl.player.Player;
 import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
-import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import java.awt.Label;
+import javax.swing.JLabel;
+import javazoom.jl.player.Player;
 
 @SuppressWarnings("serial")
 public class Interface extends JFrame {
 
-	JPanel contentPane;
+	Integer RunningPlayerInstances = 0;
+	JLabel lblAppStatus, lblServerStatus;
 	JTextField txtEnterUrl;
-	Thread thread;
+	JPanel contentPane;
 	JButton btnStop, btnPause;
+	Thread thread;
 	static Label ElapsedTime;
 	static Player mp3player;
 	static Runnable BackgroundThread;
@@ -99,10 +104,17 @@ public class Interface extends JFrame {
 		JButton btnPlay = new JButton("Play");
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				lblAppStatus.setText("Now Playing...");
 				thread = new Thread(new Runnable() {
 					@Override
 					public void run() {
+						RunningPlayerInstances = RunningPlayerInstances + 1;
+						System.out.println(RunningPlayerInstances);
+						if (RunningPlayerInstances > 1) {
+							mp3player.close();
+							thread.interrupt();
+							RunningPlayerInstances = RunningPlayerInstances - 1;
+						}
 						String Server_1 = "http://youtubeinmp3.com/fetch/?video=";
 						String song = Server_1 + txtEnterUrl.getText();
 						BufferedInputStream in = null;
@@ -113,6 +125,7 @@ public class Interface extends JFrame {
 							mp3player.play();
 							mp3player.close();
 							thread.interrupt();
+							lblAppStatus.setText("Stopped");
 						} catch (Exception e1) {
 							System.out.println("Error:" + e1);
 						}
@@ -132,10 +145,10 @@ public class Interface extends JFrame {
 
 		btnPause = new JButton("Pause");
 		btnPause.addActionListener(new ActionListener() {
-
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent arg0) {
 				thread.suspend();
+				lblAppStatus.setText("Paused");
 			}
 		});
 		btnPause.setBounds(166, 75, 142, 25);
@@ -145,6 +158,7 @@ public class Interface extends JFrame {
 		btnResume.addActionListener(new ActionListener() {
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e) {
+				lblAppStatus.setText("Now Playing...");
 				thread.resume();
 			}
 		});
@@ -154,6 +168,7 @@ public class Interface extends JFrame {
 		btnStop = new JButton("Stop");
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				lblAppStatus.setText("Stopped");
 				mp3player.close();
 				thread.interrupt();
 			}
@@ -163,7 +178,31 @@ public class Interface extends JFrame {
 
 		ElapsedTime = new Label();
 		ElapsedTime.setAlignment(Label.CENTER);
-		ElapsedTime.setBounds(227, 37, 155, 21);
+		ElapsedTime.setBounds(240, 37, 155, 21);
 		contentPane.add(ElapsedTime);
+
+		lblAppStatus = new JLabel("");
+		lblAppStatus.setBounds(12, 231, 165, 24);
+		contentPane.add(lblAppStatus);
+
+		lblServerStatus = new JLabel("");
+		lblServerStatus.setBounds(244, 231, 376, 24);
+		contentPane.add(lblServerStatus);
+
+		try {
+			String serverstatuscheck = "http://youtubeinmp3.com/fetch/?video=https://www.youtube.com/watch?v=i62Zjga8JOM";
+			HttpURLConnection connection = (HttpURLConnection) new URL(serverstatuscheck).openConnection();
+			connection.setRequestMethod("HEAD");
+			int responseCode = connection.getResponseCode();
+			if (responseCode == 200) {
+				lblServerStatus.setForeground(Color.GREEN);
+				lblServerStatus.setText("Connected to server");
+			} else {
+				lblServerStatus.setForeground(Color.RED);
+				lblServerStatus.setText("Service unable. Please try again later!");
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 	}
 }
