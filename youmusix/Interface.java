@@ -47,164 +47,187 @@ import javax.swing.ImageIcon;
 @SuppressWarnings("serial")
 public class Interface extends JFrame {
 
-    Integer RunningPlayerInstances = 0;
-    JLabel lblAppStatus, lblServerStatus;
-    JTextField txtEnterUrl;
-    JPanel contentPane;
-    JButton btnStop, btnPause;
-    Thread thread;
-    static Label ElapsedTime;
-    static Player mp3player;
-    static Runnable BackgroundThread;
-    static long millis;
-    static String hms;
+	Integer RunningPlayerInstances = 0;
+	JLabel lblAppStatus, lblServerStatus;
+	JTextField txtEnterUrl;
+	JPanel contentPane;
+	JButton btnPlay, btnStop, btnPause, btnResume;
+	Thread thread;
+	static Label ElapsedTime;
+	static Player mp3player;
+	static Runnable BackgroundThread;
+	static long millis;
+	static String hms;
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    Interface frame = new Interface();
-                    frame.setVisible(true);
-                    BackgroundThread = new Runnable() {
-                        public void run() {
-                            try {
-                                boolean temp = true;
-                                while (temp == true) {
-                                    millis = 0;
-                                    millis = mp3player.getPosition();
-                                    hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
-                                            TimeUnit.MILLISECONDS.toMinutes(millis)
-                                                    - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-                                            TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES
-                                                    .toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-                                    ElapsedTime.setText(hms);
-                                }
-                            } catch (Exception e1) {
-                                System.out.println(e1);
-                            }
-                        }
-                    };
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Interface frame = new Interface();
+					frame.setVisible(true);
+					BackgroundThread = new Runnable() {
+						public void run() {
+							try {
+								boolean temp = true;
+								while (temp == true) {
+									millis = 0;
+									millis = mp3player.getPosition();
+									hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
+											TimeUnit.MILLISECONDS.toMinutes(millis)
+													- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+											TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES
+													.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+									ElapsedTime.setText(hms);
+								}
+							} catch (Exception e1) {
+								System.out.println(e1);
+							}
+						}
+					};
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
-    public Interface() {
-        setResizable(false);
-        setTitle("YouMusix");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 640, 300);
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        setContentPane(contentPane);
-        contentPane.setLayout(null);
+	public Interface() {
+		setResizable(false);
+		setTitle("YouMusix");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 640, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
 
-        JButton btnPlay = new JButton("Play");
-        btnPlay.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                lblAppStatus.setText("Now Playing...");
-                thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String Server_1 = "http://youtubeinmp3.com/fetch/?video=";
-                        String song = Server_1 + txtEnterUrl.getText();
-                        BufferedInputStream in = null;
-                        try {
-                            in = new BufferedInputStream(new URL(song).openStream());
-                            mp3player = new Player(in);
-                            new Thread(BackgroundThread).start();
-                            mp3player.play();
-                            mp3player.close();
-                            thread.interrupt();
-                        } catch (Exception e1) {
-                            System.out.println("Error:" + e1);
-                        }
-                    }
-                });
-                thread.start();
-            }
-        });
+		btnPlay = new JButton("Play");
+		btnPlay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblAppStatus.setText("Now Playing...");
+				thread = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						String Server_1 = "http://youtubeinmp3.com/fetch/?video=";
+						String song = Server_1 + txtEnterUrl.getText();
+						BufferedInputStream in = null;
+						try {
+							in = new BufferedInputStream(new URL(song).openStream());
+							mp3player = new Player(in);
+							new Thread(BackgroundThread).start();
+							mp3player.play();
+							mp3player.close();
+							thread.interrupt();
+						} catch (Exception e1) {
+							System.out.println("Error:" + e1);
+						}
+					}
+				});
+				if (txtEnterUrl.getText().startsWith("https://")) {
+					try {
+						btnPlay.setEnabled(false);
+						btnResume.setEnabled(false);
+						btnPause.setEnabled(true);
+						btnStop.setEnabled(true);
+						thread.start();
+					} catch (Exception e1) {
+						System.out.println(e1);
+					}
+				} else {
+					lblAppStatus.setText("Please enter a valid URL");
+				}
+			}
+		});
 
-        ElapsedTime = new Label();
-        ElapsedTime.setAlignment(Label.CENTER);
-        ElapsedTime.setBounds(240, 37, 155, 21);
-        contentPane.add(ElapsedTime);
+		ElapsedTime = new Label();
+		ElapsedTime.setAlignment(Label.CENTER);
+		ElapsedTime.setBounds(240, 37, 155, 21);
+		contentPane.add(ElapsedTime);
 
-        btnPlay.setBounds(12, 75, 142, 25);
-        contentPane.add(btnPlay);
+		btnPlay.setBounds(12, 75, 142, 25);
+		contentPane.add(btnPlay);
 
-        txtEnterUrl = new JTextField();
-        txtEnterUrl.setBounds(12, 12, 598, 19);
-        contentPane.add(txtEnterUrl);
-        txtEnterUrl.setColumns(10);
+		txtEnterUrl = new JTextField();
+		txtEnterUrl.setBounds(12, 12, 598, 19);
+		contentPane.add(txtEnterUrl);
+		txtEnterUrl.setColumns(10);
 
-        btnPause = new JButton("Pause");
-        btnPause.addActionListener(new ActionListener() {
-            @SuppressWarnings("deprecation")
-            public void actionPerformed(ActionEvent arg0) {
-                thread.suspend();
-                lblAppStatus.setText("Paused");
-            }
-        });
-        btnPause.setBounds(166, 75, 142, 25);
-        contentPane.add(btnPause);
+		btnPause = new JButton("Pause");
+		btnPause.setEnabled(false);
+		btnPause.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
+			public void actionPerformed(ActionEvent arg0) {
+				thread.suspend();
+				btnPlay.setEnabled(false);
+				btnResume.setEnabled(true);
+				btnPause.setEnabled(false);
+				btnStop.setEnabled(true);
+				lblAppStatus.setText("Paused");
+			}
+		});
+		btnPause.setBounds(166, 75, 142, 25);
+		contentPane.add(btnPause);
 
-        JButton btnResume = new JButton("Resume");
-        btnResume.addActionListener(new ActionListener() {
-            @SuppressWarnings("deprecation")
-            public void actionPerformed(ActionEvent e) {
-                lblAppStatus.setText("Now Playing...");
-                thread.resume();
-            }
-        });
-        btnResume.setBounds(320, 75, 142, 25);
-        contentPane.add(btnResume);
+		btnResume = new JButton("Resume");
+		btnResume.setEnabled(false);
+		btnResume.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
+			public void actionPerformed(ActionEvent e) {
+				btnPlay.setEnabled(false);
+				btnResume.setEnabled(false);
+				btnPause.setEnabled(true);
+				btnStop.setEnabled(true);
+				lblAppStatus.setText("Now Playing...");
+				thread.resume();
+			}
+		});
+		btnResume.setBounds(320, 75, 142, 25);
+		contentPane.add(btnResume);
 
-        btnStop = new JButton("Stop");
-        btnStop.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                lblAppStatus.setText("Stopped");
-                mp3player.close();
-                thread.interrupt();
-            }
-        });
-        btnStop.setBounds(474, 75, 142, 25);
-        contentPane.add(btnStop);
+		btnStop = new JButton("Stop");
+		btnStop.setEnabled(false);
+		btnStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnPlay.setEnabled(true);
+				btnResume.setEnabled(false);
+				btnPause.setEnabled(false);
+				btnStop.setEnabled(false);
+				lblAppStatus.setText("Stopped");
+				mp3player.close();
+				thread.interrupt();
+			}
+		});
+		btnStop.setBounds(474, 75, 142, 25);
+		contentPane.add(btnStop);
 
-        lblAppStatus = new JLabel("");
-        lblAppStatus.setBounds(12, 231, 165, 24);
-        contentPane.add(lblAppStatus);
+		lblAppStatus = new JLabel("");
+		lblAppStatus.setBounds(12, 231, 165, 24);
+		contentPane.add(lblAppStatus);
 
-        lblServerStatus = new JLabel("");
-        lblServerStatus.setBounds(244, 231, 376, 24);
-        contentPane.add(lblServerStatus);
+		lblServerStatus = new JLabel("");
+		lblServerStatus.setBounds(244, 231, 376, 24);
+		contentPane.add(lblServerStatus);
 
-        JLabel lblBackground = new JLabel("");
-        lblBackground.setIcon(new ImageIcon(Interface.class.getResource("/graphics/background1.png")));
-        lblBackground.setBounds(0, 0, 632, 267);
-        contentPane.add(lblBackground);
+		JLabel lblBackground = new JLabel("");
+		lblBackground.setIcon(new ImageIcon(Interface.class.getResource("/graphics/background1.png")));
+		lblBackground.setBounds(0, 0, 632, 267);
+		contentPane.add(lblBackground);
 
-        try {
-            String ServerStatusCheck = "http://youtubeinmp3.com/fetch/?video=https://www.youtube.com/watch?v=i62Zjga8JOM";
-            HttpURLConnection connection = (HttpURLConnection) new URL(ServerStatusCheck).openConnection();
-            connection.setRequestMethod("HEAD");
-            int responseCode = connection.getResponseCode();
-            if (responseCode == 200) {
-                lblServerStatus.setForeground(Color.GREEN);
-                lblServerStatus.setText("Connected to server");
-            } else {
-                lblServerStatus.setForeground(Color.RED);
-                lblServerStatus.setText("Service unable. Please try again later!");
-            }
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
-    }
-<<<<<<< HEAD
+		try {
+			String ServerStatusCheck = "http://youtubeinmp3.com/fetch/?video=https://www.youtube.com/watch?v=i62Zjga8JOM";
+			HttpURLConnection connection = (HttpURLConnection) new URL(ServerStatusCheck).openConnection();
+			connection.setRequestMethod("HEAD");
+			int responseCode = connection.getResponseCode();
+			if (responseCode == 200) {
+				lblServerStatus.setForeground(Color.GREEN);
+				lblServerStatus.setText("Connected to server");
+			} else {
+				lblServerStatus.setForeground(Color.RED);
+				lblServerStatus.setText("Service unable. Please try again later!");
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
 }
-=======
-}
->>>>>>> ec34b0f5ac7b161309718c6e3e0141fd07e5e701
