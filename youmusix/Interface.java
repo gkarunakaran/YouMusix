@@ -43,6 +43,9 @@ import java.awt.Label;
 import javax.swing.JLabel;
 import javazoom.jl.player.Player;
 import javax.swing.ImageIcon;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.Toolkit;
 
 @SuppressWarnings("serial")
 public class Interface extends JFrame {
@@ -93,6 +96,7 @@ public class Interface extends JFrame {
 	}
 
 	public Interface() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Interface.class.getResource("/graphics/YouMusix_Icon.png")));
 		setResizable(false);
 		setTitle("YouMusix");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -102,7 +106,23 @@ public class Interface extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		btnPlay = new JButton("Play");
+		btnPlay = new JButton("");
+		btnPlay.setVisible(true);
+		btnPlay.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				btnPlay.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Play_Hover.png")));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnPlay.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Play_Standard.png")));
+			}
+		});
+		btnPlay.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Play_Standard.png")));
+		btnPlay.setOpaque(false);
+		btnPlay.setContentAreaFilled(false);
+		btnPlay.setBorderPainted(false);
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				lblAppStatus.setText("Now Playing...");
@@ -119,6 +139,7 @@ public class Interface extends JFrame {
 							mp3player.play();
 							mp3player.close();
 							thread.interrupt();
+							lblAppStatus.setText("Stopped");
 						} catch (Exception e1) {
 							System.out.println("Error:" + e1);
 						}
@@ -128,8 +149,8 @@ public class Interface extends JFrame {
 					try {
 						btnResume.setVisible(false);
 						btnPause.setVisible(true);
-						btnPlay.setVisible(false);
 						btnStop.setVisible(true);
+						btnPlay.setVisible(false);
 						thread.start();
 					} catch (Exception e1) {
 						System.out.println(e1);
@@ -145,7 +166,7 @@ public class Interface extends JFrame {
 		ElapsedTime.setBounds(240, 37, 155, 21);
 		contentPane.add(ElapsedTime);
 
-		btnPlay.setBounds(240, 75, 155, 25);
+		btnPlay.setBounds(221, 75, 75, 50);
 		contentPane.add(btnPlay);
 
 		txtEnterUrl = new JTextField();
@@ -153,7 +174,23 @@ public class Interface extends JFrame {
 		contentPane.add(txtEnterUrl);
 		txtEnterUrl.setColumns(10);
 
-		btnPause = new JButton("Pause");
+		btnPause = new JButton("");
+		btnPause.setVisible(false);
+		btnPause.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnPause.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Pause_Hover.png")));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnPause.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Pause_Standard.png")));
+			}
+		});
+		btnPause.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Pause_Standard.png")));
+		btnPause.setOpaque(false);
+		btnPause.setContentAreaFilled(false);
+		btnPause.setBorderPainted(false);
 		btnPause.addActionListener(new ActionListener() {
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent arg0) {
@@ -163,37 +200,69 @@ public class Interface extends JFrame {
 				lblAppStatus.setText("Paused");
 			}
 		});
-		btnPause.setBounds(240, 75, 155, 25);
+		btnPause.setBounds(221, 75, 75, 50);
 		contentPane.add(btnPause);
 
-		btnResume = new JButton("Resume");
+		btnResume = new JButton("");
+		btnResume.setVisible(false);
+		btnResume.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnResume.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Play_Hover.png")));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnResume.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Play_Standard.png")));
+			}
+		});
+		btnResume.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Play_Standard.png")));
+		btnResume.setOpaque(false);
+		btnResume.setContentAreaFilled(false);
+		btnResume.setBorderPainted(false);
 		btnResume.addActionListener(new ActionListener() {
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e) {
+				lblAppStatus.setText("Now Playing...");
 				btnResume.setVisible(false);
 				btnPause.setVisible(true);
-				lblAppStatus.setText("Now Playing...");
 				thread.resume();
 			}
 		});
-		btnResume.setBounds(240, 75, 155, 25);
+		btnResume.setBounds(221, 75, 75, 50);
 		contentPane.add(btnResume);
 
-		btnStop = new JButton("Stop");
+		btnStop = new JButton("");
+		btnStop.setVisible(false);
+		btnStop.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnStop.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Stop_Hover.png")));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnStop.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Stop_Standard.png")));
+			}
+		});
+		btnStop.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Stop_Standard.png")));
+		btnStop.setOpaque(false);
+		btnStop.setContentAreaFilled(false);
+		btnStop.setBorderPainted(false);
 		btnStop.addActionListener(new ActionListener() {
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e) {
-					btnPlay.setVisible(true);
-					btnPause.setVisible(false);
-					btnResume.setVisible(false);
-					thread.resume();
-					mp3player.close();
-					thread.interrupt();
-					btnStop.setVisible(false);
-					lblAppStatus.setText("Stopped");
+				btnPlay.setVisible(true);
+				btnPause.setVisible(false);
+				btnResume.setVisible(false);
+				thread.resume();
+				mp3player.close();
+				thread.interrupt();
+				btnStop.setVisible(false);
+				lblAppStatus.setText("Stopped");
 			}
 		});
-		btnStop.setBounds(465, 75, 155, 25);
+		btnStop.setBounds(345, 75, 75, 50);
 		contentPane.add(btnStop);
 
 		lblAppStatus = new JLabel("");
@@ -208,11 +277,6 @@ public class Interface extends JFrame {
 		lblBackground.setIcon(new ImageIcon(Interface.class.getResource("/graphics/background1.png")));
 		lblBackground.setBounds(0, 0, 632, 267);
 		contentPane.add(lblBackground);
-
-		btnPlay.setVisible(true);
-		btnStop.setVisible(false);
-		btnResume.setVisible(false);
-		btnPause.setVisible(false);
 
 		try {
 			String ServerStatusCheck = "http://youtubeinmp3.com/fetch/?video=https://www.youtube.com/watch?v=i62Zjga8JOM";
