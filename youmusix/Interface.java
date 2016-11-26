@@ -126,10 +126,10 @@ public class Interface extends JFrame {
 				});
 				if (txtEnterUrl.getText().startsWith("https://")) {
 					try {
-						btnPlay.setEnabled(false);
-						btnResume.setEnabled(false);
-						btnPause.setEnabled(true);
-						btnStop.setEnabled(true);
+						btnResume.setVisible(false);
+						btnPause.setVisible(true);
+						btnPlay.setVisible(false);
+						btnStop.setVisible(true);
 						thread.start();
 					} catch (Exception e1) {
 						System.out.println(e1);
@@ -145,7 +145,7 @@ public class Interface extends JFrame {
 		ElapsedTime.setBounds(240, 37, 155, 21);
 		contentPane.add(ElapsedTime);
 
-		btnPlay.setBounds(12, 75, 142, 25);
+		btnPlay.setBounds(240, 75, 155, 25);
 		contentPane.add(btnPlay);
 
 		txtEnterUrl = new JTextField();
@@ -154,51 +154,46 @@ public class Interface extends JFrame {
 		txtEnterUrl.setColumns(10);
 
 		btnPause = new JButton("Pause");
-		btnPause.setEnabled(false);
 		btnPause.addActionListener(new ActionListener() {
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent arg0) {
 				thread.suspend();
-				btnPlay.setEnabled(false);
-				btnResume.setEnabled(true);
-				btnPause.setEnabled(false);
-				btnStop.setEnabled(true);
+				btnResume.setVisible(true);
+				btnPause.setVisible(false);
 				lblAppStatus.setText("Paused");
 			}
 		});
-		btnPause.setBounds(166, 75, 142, 25);
+		btnPause.setBounds(240, 75, 155, 25);
 		contentPane.add(btnPause);
 
 		btnResume = new JButton("Resume");
-		btnResume.setEnabled(false);
 		btnResume.addActionListener(new ActionListener() {
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e) {
-				btnPlay.setEnabled(false);
-				btnResume.setEnabled(false);
-				btnPause.setEnabled(true);
-				btnStop.setEnabled(true);
+				btnResume.setVisible(false);
+				btnPause.setVisible(true);
 				lblAppStatus.setText("Now Playing...");
 				thread.resume();
 			}
 		});
-		btnResume.setBounds(320, 75, 142, 25);
+		btnResume.setBounds(240, 75, 155, 25);
 		contentPane.add(btnResume);
 
 		btnStop = new JButton("Stop");
-		btnStop.setEnabled(false);
 		btnStop.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e) {
-				btnPlay.setEnabled(true);
-				btnResume.setEnabled(false);
-				btnPause.setEnabled(false);
-				btnStop.setEnabled(false);
-				lblAppStatus.setText("Stopped");
-				mp3player.close();
-				thread.interrupt();
+					btnPlay.setVisible(true);
+					btnPause.setVisible(false);
+					btnResume.setVisible(false);
+					thread.resume();
+					mp3player.close();
+					thread.interrupt();
+					btnStop.setVisible(false);
+					lblAppStatus.setText("Stopped");
 			}
 		});
-		btnStop.setBounds(474, 75, 142, 25);
+		btnStop.setBounds(465, 75, 155, 25);
 		contentPane.add(btnStop);
 
 		lblAppStatus = new JLabel("");
@@ -213,6 +208,11 @@ public class Interface extends JFrame {
 		lblBackground.setIcon(new ImageIcon(Interface.class.getResource("/graphics/background1.png")));
 		lblBackground.setBounds(0, 0, 632, 267);
 		contentPane.add(lblBackground);
+
+		btnPlay.setVisible(true);
+		btnStop.setVisible(false);
+		btnResume.setVisible(false);
+		btnPause.setVisible(false);
 
 		try {
 			String ServerStatusCheck = "http://youtubeinmp3.com/fetch/?video=https://www.youtube.com/watch?v=i62Zjga8JOM";
