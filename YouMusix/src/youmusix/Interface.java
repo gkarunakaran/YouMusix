@@ -46,11 +46,12 @@ import javax.swing.ImageIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Toolkit;
+import javax.swing.SwingConstants;
 
 @SuppressWarnings("serial")
 public class Interface extends JFrame {
 
-	Integer RunningPlayerInstances = 0;
+	Integer UrlBarSelected = 0;
 	JLabel lblAppStatus, lblServerStatus;
 	JTextField txtEnterUrl;
 	JPanel contentPane;
@@ -98,9 +99,9 @@ public class Interface extends JFrame {
 	public Interface() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Interface.class.getResource("/graphics/YouMusix_Icon.png")));
 		setResizable(false);
-		setTitle("YouMusix");
+		setTitle("YouMusix ♪");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 640, 300);
+		setBounds(100, 100, 640, 341);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -170,7 +171,18 @@ public class Interface extends JFrame {
 		contentPane.add(btnPlay);
 
 		txtEnterUrl = new JTextField();
-		txtEnterUrl.setBounds(12, 12, 598, 19);
+		txtEnterUrl.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (UrlBarSelected == 0) {
+					txtEnterUrl.setText("");
+					UrlBarSelected = UrlBarSelected + 1;
+				}
+			}
+		});
+		txtEnterUrl.setForeground(Color.GRAY);
+		txtEnterUrl.setText("Enter Youtube Video URL...");
+		txtEnterUrl.setBounds(12, 12, 608, 19);
 		contentPane.add(txtEnterUrl);
 		txtEnterUrl.setColumns(10);
 
@@ -266,16 +278,18 @@ public class Interface extends JFrame {
 		contentPane.add(btnStop);
 
 		lblAppStatus = new JLabel("");
-		lblAppStatus.setBounds(12, 231, 165, 24);
+		lblAppStatus.setHorizontalAlignment(SwingConstants.CENTER);
+		lblAppStatus.setBounds(240, 241, 155, 24);
 		contentPane.add(lblAppStatus);
 
 		lblServerStatus = new JLabel("");
-		lblServerStatus.setBounds(244, 231, 376, 24);
+		lblServerStatus.setForeground(Color.RED);
+		lblServerStatus.setBounds(395, 241, 225, 24);
 		contentPane.add(lblServerStatus);
 
 		JLabel lblBackground = new JLabel("");
 		lblBackground.setIcon(new ImageIcon(Interface.class.getResource("/graphics/background1.png")));
-		lblBackground.setBounds(0, 0, 632, 267);
+		lblBackground.setBounds(0, 0, 632, 312);
 		contentPane.add(lblBackground);
 
 		try {
@@ -283,12 +297,8 @@ public class Interface extends JFrame {
 			HttpURLConnection connection = (HttpURLConnection) new URL(ServerStatusCheck).openConnection();
 			connection.setRequestMethod("HEAD");
 			int responseCode = connection.getResponseCode();
-			if (responseCode == 200) {
-				lblServerStatus.setForeground(Color.GREEN);
-				lblServerStatus.setText("Connected to server");
-			} else {
-				lblServerStatus.setForeground(Color.RED);
-				lblServerStatus.setText("Service unable. Please try again later!");
+			if (!(responseCode == 200)) {
+				lblServerStatus.setText("Service currently unavailable!");
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
