@@ -1,7 +1,7 @@
 # YouMusix
 
 A YouTube to MP3 player. Enter a YouTube video URL and stream it as MP3. Listen to latest music while saving bandwidth!
-<center>![Screenshot](https://raw.githubusercontent.com/kvsjxd/YouMusix/gh-pages/images/Screenshot.png)</center>
+![Screenshot](https://raw.githubusercontent.com/kvsjxd/YouMusix/gh-pages/images/Screenshot.png)
 
 ## Features:
 
