@@ -27,41 +27,46 @@
 package youmusix;
 
 import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Label;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
-import java.awt.event.ActionEvent;
-import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import java.awt.Label;
-import javax.swing.JLabel;
-import javazoom.jl.player.Player;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.Toolkit;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javazoom.jl.player.Player;
 
 @SuppressWarnings("serial")
 public class Interface extends JFrame {
 
-	Integer UrlBarSelected = 0;
-	JLabel lblAppStatus, lblServerStatus;
-	JTextField txtEnterUrl;
+	JLabel lblAppStatus, lblServerStatus, lblThumbnail;
+	JTextField VideoURL;
 	JPanel contentPane;
 	JButton btnPlay, btnStop, btnPause, btnResume;
 	Thread thread;
+	Boolean InitialURLBarClick = false;
 	static Label ElapsedTime;
 	static Player mp3player;
 	static Runnable BackgroundThread;
 	static long millis;
 	static String hms;
+	String VideoID;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -101,7 +106,7 @@ public class Interface extends JFrame {
 		setResizable(false);
 		setTitle("YouMusix ♪");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 640, 341);
+		setBounds(100, 100, 640, 356);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -131,10 +136,19 @@ public class Interface extends JFrame {
 					@Override
 					public void run() {
 						String Server_1 = "http://youtubeinmp3.com/fetch/?video=";
-						String song = Server_1 + txtEnterUrl.getText();
+						String Video = Server_1 + VideoURL.getText();
 						BufferedInputStream in = null;
 						try {
-							in = new BufferedInputStream(new URL(song).openStream());
+							String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
+							Pattern compiledPattern = Pattern.compile(pattern);
+							Matcher matcher = compiledPattern.matcher(VideoURL.getText());
+							if (matcher.find()) {
+								VideoID = matcher.group();
+								URL thumbnailurl = new URL("https://i1.ytimg.com/vi/" + VideoID + "/default.jpg");
+								BufferedImage image = ImageIO.read(thumbnailurl);
+								lblThumbnail.setIcon(new ImageIcon(image));
+							}
+							in = new BufferedInputStream(new URL(Video).openStream());
 							mp3player = new Player(in);
 							new Thread(BackgroundThread).start();
 							mp3player.play();
@@ -146,7 +160,7 @@ public class Interface extends JFrame {
 						}
 					}
 				});
-				if (txtEnterUrl.getText().startsWith("https://")) {
+				if (VideoURL.getText().startsWith("https://")) {
 					try {
 						btnResume.setVisible(false);
 						btnPause.setVisible(true);
@@ -162,6 +176,10 @@ public class Interface extends JFrame {
 			}
 		});
 
+		lblThumbnail = new JLabel("");
+		lblThumbnail.setBounds(470, 37, 120, 80);
+		contentPane.add(lblThumbnail);
+
 		ElapsedTime = new Label();
 		ElapsedTime.setAlignment(Label.CENTER);
 		ElapsedTime.setBounds(240, 37, 155, 21);
@@ -170,21 +188,21 @@ public class Interface extends JFrame {
 		btnPlay.setBounds(221, 75, 75, 50);
 		contentPane.add(btnPlay);
 
-		txtEnterUrl = new JTextField();
-		txtEnterUrl.addMouseListener(new MouseAdapter() {
+		VideoURL = new JTextField();
+		VideoURL.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (UrlBarSelected == 0) {
-					txtEnterUrl.setText("");
-					UrlBarSelected = UrlBarSelected + 1;
+				if (InitialURLBarClick == false) {
+					VideoURL.setText("");
+					InitialURLBarClick = true;
 				}
 			}
 		});
-		txtEnterUrl.setForeground(Color.GRAY);
-		txtEnterUrl.setText("Enter Youtube Video URL...");
-		txtEnterUrl.setBounds(12, 12, 608, 19);
-		contentPane.add(txtEnterUrl);
-		txtEnterUrl.setColumns(10);
+		VideoURL.setForeground(Color.GRAY);
+		VideoURL.setText("Enter YouTube video URL, ex. https://www.youtube.com/watch?v=EP625xQIGzs");
+		VideoURL.setBounds(0, 0, 632, 31);
+		contentPane.add(VideoURL);
+		VideoURL.setColumns(10);
 
 		btnPause = new JButton("");
 		btnPause.setVisible(false);
@@ -288,8 +306,8 @@ public class Interface extends JFrame {
 		contentPane.add(lblServerStatus);
 
 		JLabel lblBackground = new JLabel("");
-		lblBackground.setIcon(new ImageIcon(Interface.class.getResource("/graphics/background1.png")));
-		lblBackground.setBounds(0, 0, 632, 312);
+		lblBackground.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Background.png")));
+		lblBackground.setBounds(0, 12, 632, 322);
 		contentPane.add(lblBackground);
 
 		try {
