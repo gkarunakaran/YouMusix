@@ -135,10 +135,10 @@ public class Interface extends JFrame {
 				thread = new Thread(new Runnable() {
 					@Override
 					public void run() {
-						String Server_1 = "http://youtubeinmp3.com/fetch/?video=";
-						String Video = Server_1 + VideoURL.getText();
 						BufferedInputStream in = null;
 						try {
+							String Server_1 = "http://youtubeinmp3.com/fetch/?video=";
+							URL Video = new URL(Server_1 + VideoURL.getText());
 							String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
 							Pattern compiledPattern = Pattern.compile(pattern);
 							Matcher matcher = compiledPattern.matcher(VideoURL.getText());
@@ -148,7 +148,7 @@ public class Interface extends JFrame {
 								BufferedImage image = ImageIO.read(thumbnailurl);
 								lblThumbnail.setIcon(new ImageIcon(image));
 							}
-							in = new BufferedInputStream(new URL(Video).openStream());
+							in = new BufferedInputStream(Video.openStream());
 							mp3player = new Player(in);
 							new Thread(BackgroundThread).start();
 							mp3player.play();
