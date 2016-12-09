@@ -2,13 +2,12 @@
 
 A YouTube to MP3 player. Enter a YouTube video URL and stream it as MP3. Listen to latest music while saving bandwidth!
 
-![Screenshot](https://raw.githubusercontent.com/kvsjxd/YouMusix/gh-pages/images/Screenshot.png)
-
 ## Features:
 
 * Easy to use
 * Video duration limit - Approx. 1 hour
 * Highest sound quality (Depends on Video)
+* Check MP3 stream size without downloading it
 * Saves a lot of bandwidth
 
   More features coming soon...

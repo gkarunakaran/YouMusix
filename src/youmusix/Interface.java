@@ -28,7 +28,6 @@ package youmusix;
 
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Label;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +37,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,57 +46,64 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
+import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
 @SuppressWarnings("serial")
 public class Interface extends JFrame {
 
-	JLabel lblAppStatus, lblServerStatus, lblThumbnail;
+	JLabel lblAppStatus, lblThumbnail;
 	JTextField VideoURL;
 	JPanel contentPane;
-	JButton btnPlay, btnStop, btnPause, btnResume;
+	JButton btnPlay, btnStop, btnPause, btnResume, btnRepeatDisabled, btnRepeatEnabled;
 	Thread thread;
+	String VideoID, RepeatMusic;
 	Boolean InitialURLBarClick = false;
-	static Label ElapsedTime;
 	static Player mp3player;
 	static Runnable BackgroundThread;
-	static long millis;
+	static long MilliSeconds = 0;
 	static String hms;
-	String VideoID;
+	private JMenuItem mntmCalculateMpStream;
+	private JMenuItem mntmExit;
+	private JMenu mnHelp;
+	private JMenuItem mntmAbout;
+	private JMenuItem mntmLicence;
+	private static JLabel lblElapsedTime;
 
 	public static void main(String[] args) {
+		Interface frame = new Interface();
+		frame.setVisible(true);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
-					Interface frame = new Interface();
-					frame.setVisible(true);
-					BackgroundThread = new Runnable() {
-						public void run() {
-							try {
-								boolean temp = true;
-								while (temp == true) {
-									millis = 0;
-									millis = mp3player.getPosition();
-									hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
-											TimeUnit.MILLISECONDS.toMinutes(millis)
-													- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-											TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES
-													.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-									ElapsedTime.setText(hms);
-								}
-							} catch (Exception e1) {
-								System.out.println(e1);
+				BackgroundThread = new Runnable() {
+					public void run() {
+						try {
+							boolean temp = true;
+							while (temp == true) {
+								MilliSeconds = 0;
+								MilliSeconds = mp3player.getPosition();
+								hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(MilliSeconds),
+										TimeUnit.MILLISECONDS.toMinutes(MilliSeconds)
+												- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(MilliSeconds)),
+										TimeUnit.MILLISECONDS.toSeconds(MilliSeconds) - TimeUnit.MINUTES
+												.toSeconds(TimeUnit.MILLISECONDS.toMinutes(MilliSeconds)));
+								System.out.println("Timer working...");
+								lblElapsedTime.setText(hms);
 							}
+						} catch (Exception e1) {
+							System.out.println(e1);
 						}
-					};
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+					}
+				};
 			}
 		});
 	}
@@ -106,7 +113,97 @@ public class Interface extends JFrame {
 		setResizable(false);
 		setTitle("YouMusix ♪");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 640, 356);
+		setBounds(100, 100, 640, 382);
+
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+
+		JMenu mnMenu = new JMenu("Menu");
+		menuBar.add(mnMenu);
+
+		mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		mnMenu.add(mntmExit);
+
+		JMenu mnTools = new JMenu("Tools");
+		menuBar.add(mnTools);
+
+		JMenuItem mntmSeverStatus = new JMenuItem("Sever status");
+		mntmSeverStatus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					String ServerStatusCheck = "http://youtubeinmp3.com/fetch/?video=https://www.youtube.com/watch?v=i62Zjga8JOM";
+					HttpURLConnection connection = (HttpURLConnection) new URL(ServerStatusCheck).openConnection();
+					connection.setRequestMethod("HEAD");
+					int responseCode = connection.getResponseCode();
+					if ((responseCode == 200)) {
+						JOptionPane.showMessageDialog(null, "Server is working normally");
+					} else {
+						JOptionPane.showMessageDialog(null, "Service currently unavailable!");
+					}
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		mntmCalculateMpStream = new JMenuItem("Calculate MP3 stream size");
+		mntmCalculateMpStream.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String VideoURL = JOptionPane
+						.showInputDialog("Enter YouTube video URL, ex. https://www.youtube.com/watch?v=EP625xQIGzs");
+				try {
+					String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
+					Pattern compiledPattern = Pattern.compile(pattern);
+					Matcher matcher = compiledPattern.matcher(VideoURL);
+					if (matcher.find()) {
+						long size;
+						URL url = new URL("http://youtubeinmp3.com/fetch/?video=" + VideoURL);
+						URLConnection conn = url.openConnection();
+						size = conn.getContentLength();
+						size = size / 1024 / 1024;
+						if (size < 0) {
+							JOptionPane.showMessageDialog(null, "Error");
+						} else {
+							JOptionPane.showMessageDialog(null, "MP3 stream size: " + size + " MB");
+						}
+						conn.getInputStream().close();
+					} else {
+						JOptionPane.showMessageDialog(null, "Please enter a valid URL", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e1) {
+					System.out.println(e1);
+				}
+			}
+		});
+		mnTools.add(mntmCalculateMpStream);
+		mnTools.add(mntmSeverStatus);
+
+		mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+
+		mntmAbout = new JMenuItem("About");
+		mntmAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				About obj = new About();
+				obj.setVisible(true);
+			}
+		});
+		mnHelp.add(mntmAbout);
+
+		mntmLicence = new JMenuItem("Licence");
+		mntmLicence.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				License obj = new License();
+				obj.setVisible(true);
+			}
+		});
+		mnHelp.add(mntmLicence);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -154,9 +251,20 @@ public class Interface extends JFrame {
 							mp3player.play();
 							mp3player.close();
 							thread.interrupt();
-							lblAppStatus.setText("Stopped");
-						} catch (Exception e1) {
-							System.out.println("Error:" + e1);
+							if (RepeatMusic.equalsIgnoreCase("true")) {
+								btnStop.doClick();
+								btnPlay.doClick();
+							}
+							if (RepeatMusic.equalsIgnoreCase("false")) {
+								lblAppStatus.setText("Stopped");
+							}
+						} catch (JavaLayerException DecoderError) {
+							lblAppStatus.setText("Connection error! Trying again...");
+							btnStop.doClick();
+							lblAppStatus.setText("Playing...");
+							thread.start();
+						} catch (Exception e) {
+							System.out.println("Error: " + e);
 						}
 					}
 				});
@@ -176,16 +284,68 @@ public class Interface extends JFrame {
 			}
 		});
 
+		btnRepeatEnabled = new JButton("");
+		btnRepeatEnabled.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				btnRepeatEnabled.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Repeat_Hover.png")));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnRepeatEnabled.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Repeat_Standard.png")));
+			}
+		});
+		btnRepeatEnabled.setOpaque(false);
+		btnRepeatEnabled.setContentAreaFilled(false);
+		btnRepeatEnabled.setBorderPainted(false);
+		btnRepeatEnabled.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				btnRepeatEnabled.setVisible(false);
+				btnRepeatDisabled.setVisible(true);
+				AppSettings.Write_Repeating_the_music_is_disabled();
+			}
+		});
+
+		btnRepeatDisabled = new JButton("");
+		btnRepeatDisabled.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnRepeatDisabled.setIcon(new ImageIcon(Interface.class.getResource("/graphics/No_Repeat_Hower.png")));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnRepeatDisabled
+						.setIcon(new ImageIcon(Interface.class.getResource("/graphics/No_Repeat_Standard.png")));
+			}
+		});
+		btnRepeatDisabled.setOpaque(false);
+		btnRepeatDisabled.setContentAreaFilled(false);
+		btnRepeatDisabled.setBorderPainted(false);
+		btnRepeatDisabled.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnRepeatDisabled.setVisible(false);
+				btnRepeatEnabled.setVisible(true);
+				AppSettings.Write_Repeating_the_music_is_enabled();
+			}
+		});
+
+		lblElapsedTime = new JLabel("");
+		lblElapsedTime.setBounds(255, 37, 129, 21);
+		contentPane.add(lblElapsedTime);
+		btnRepeatDisabled.setIcon(new ImageIcon(Interface.class.getResource("/graphics/No_Repeat_Standard.png")));
+		btnRepeatDisabled.setBounds(337, 75, 64, 50);
+		contentPane.add(btnRepeatDisabled);
+		btnRepeatEnabled.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Repeat_Standard.png")));
+		btnRepeatEnabled.setBounds(337, 75, 64, 50);
+		contentPane.add(btnRepeatEnabled);
+
 		lblThumbnail = new JLabel("");
 		lblThumbnail.setBounds(470, 37, 120, 80);
 		contentPane.add(lblThumbnail);
 
-		ElapsedTime = new Label();
-		ElapsedTime.setAlignment(Label.CENTER);
-		ElapsedTime.setBounds(240, 37, 155, 21);
-		contentPane.add(ElapsedTime);
-
-		btnPlay.setBounds(221, 75, 75, 50);
+		btnPlay.setBounds(232, 75, 75, 50);
 		contentPane.add(btnPlay);
 
 		VideoURL = new JTextField();
@@ -227,10 +387,11 @@ public class Interface extends JFrame {
 				thread.suspend();
 				btnResume.setVisible(true);
 				btnPause.setVisible(false);
+				btnStop.setVisible(true);
 				lblAppStatus.setText("Paused");
 			}
 		});
-		btnPause.setBounds(221, 75, 75, 50);
+		btnPause.setBounds(232, 75, 75, 50);
 		contentPane.add(btnPause);
 
 		btnResume = new JButton("");
@@ -259,7 +420,7 @@ public class Interface extends JFrame {
 				thread.resume();
 			}
 		});
-		btnResume.setBounds(221, 75, 75, 50);
+		btnResume.setBounds(232, 75, 75, 50);
 		contentPane.add(btnResume);
 
 		btnStop = new JButton("");
@@ -292,34 +453,30 @@ public class Interface extends JFrame {
 				lblAppStatus.setText("Stopped");
 			}
 		});
-		btnStop.setBounds(345, 75, 75, 50);
+		btnStop.setBounds(288, 75, 64, 50);
 		contentPane.add(btnStop);
 
 		lblAppStatus = new JLabel("");
 		lblAppStatus.setHorizontalAlignment(SwingConstants.CENTER);
-		lblAppStatus.setBounds(240, 241, 155, 24);
+		lblAppStatus.setBounds(255, 241, 129, 24);
 		contentPane.add(lblAppStatus);
-
-		lblServerStatus = new JLabel("");
-		lblServerStatus.setForeground(Color.RED);
-		lblServerStatus.setBounds(395, 241, 225, 24);
-		contentPane.add(lblServerStatus);
 
 		JLabel lblBackground = new JLabel("");
 		lblBackground.setIcon(new ImageIcon(Interface.class.getResource("/graphics/Background.png")));
-		lblBackground.setBounds(0, 12, 632, 322);
+		lblBackground.setBounds(0, 30, 632, 298);
 		contentPane.add(lblBackground);
 
-		try {
-			String ServerStatusCheck = "http://youtubeinmp3.com/fetch/?video=https://www.youtube.com/watch?v=i62Zjga8JOM";
-			HttpURLConnection connection = (HttpURLConnection) new URL(ServerStatusCheck).openConnection();
-			connection.setRequestMethod("HEAD");
-			int responseCode = connection.getResponseCode();
-			if (!(responseCode == 200)) {
-				lblServerStatus.setText("Service currently unavailable!");
-			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
+		btnRepeatEnabled.setVisible(false);
+		btnRepeatDisabled.setVisible(false);
+		AppSettings.Load_the_settings();
+		RepeatMusic = AppSettings.RepeatMusic;
+
+		if (RepeatMusic.equalsIgnoreCase("true")) {
+			btnRepeatEnabled.setVisible(true);
 		}
+		if (RepeatMusic.equalsIgnoreCase("false")) {
+			btnRepeatDisabled.setVisible(true);
+		}
+
 	}
 }
