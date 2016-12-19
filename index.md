@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/kvsjxd/YouMusix/gh-pages/images/Screenshot.png/">
+  <img src="/images/Screenshot.png/">
 </p>
 
 ## Features:
