@@ -1,4 +1,6 @@
-![Screenshot](https://raw.githubusercontent.com/kvsjxd/YouMusix/gh-pages/images/Screenshot.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kvsjxd/YouMusix/gh-pages/images/Screenshot.png/">
+</p>
 
 ## Features:
 
