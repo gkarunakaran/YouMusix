@@ -22,4 +22,4 @@ If you are using UNIX-Like OS (GNU/Linux, MacOS, BSD, etc.) make sure the JAR fi
 
 ## Possible Issues:
 
-* Elasped Duration is known to work only when running project within IDE and does not work in exported runnable JAR.
+* Elapsed Duration is known to work only when running project within IDE and does not work in exported runnable JAR.
