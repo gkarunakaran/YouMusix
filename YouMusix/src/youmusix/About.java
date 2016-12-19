@@ -35,8 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -44,6 +42,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import java.net.URL;
 
 @SuppressWarnings("serial")
 public class About extends JFrame {
@@ -95,7 +94,7 @@ public class About extends JFrame {
 		btnGitHub.setBounds(25, 112, 183, 25);
 		contentPane.add(btnGitHub);
 
-		JLabel lblApplicationVersion = new JLabel("Version: Alpha Build 161109");
+		JLabel lblApplicationVersion = new JLabel("Version: Alpha Build 161119");
 		lblApplicationVersion.setFont(new Font("Dialog", Font.BOLD, 14));
 		lblApplicationVersion.setBounds(25, 72, 260, 18);
 		contentPane.add(lblApplicationVersion);

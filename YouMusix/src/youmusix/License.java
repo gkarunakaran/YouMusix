@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+import java.awt.Toolkit;
 
 @SuppressWarnings("serial")
 public class License extends JFrame {
@@ -53,10 +54,12 @@ public class License extends JFrame {
 	}
 
 	public License() {
+		setType(Type.UTILITY);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(License.class.getResource("/graphics/YouMusix_Icon.png")));
 		setResizable(false);
 		setTitle("YouMusix License");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 707, 500);
+		setBounds(100, 100, 600, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

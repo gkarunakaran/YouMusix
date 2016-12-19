@@ -33,13 +33,13 @@ public class Main {
 		try {
 			File file = new File(".config.properties");
 			if (file.exists() && !file.isDirectory()) {
-				new Interface().setVisible(true);
+				new Client().setVisible(true);
 			} else {
 				AppSettings.Write_the_default_settings();
-				new Interface().setVisible(true);
+				new Client().setVisible(true);
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+			System.out.print(e);
 		}
 	}
 }
