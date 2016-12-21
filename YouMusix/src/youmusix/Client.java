@@ -197,7 +197,7 @@ public class Client extends JFrame {
 							"Debugger is activated.\nDebug log will be displayed in console!");
 				} else {
 					debugging = false;
-					JOptionPane.showMessageDialog(null, "Debuger is deactivated");
+					JOptionPane.showMessageDialog(null, "Debugger is deactivated");
 				}
 			}
 		});
