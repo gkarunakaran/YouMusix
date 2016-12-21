@@ -68,6 +68,7 @@ public class Client extends JFrame {
 	JButton btnPlay, btnStop, btnPause, btnResume, btnRepeatDisabled, btnRepeatEnabled;
 	Thread thread;
 	Boolean InitialURLBarClick = false;
+	static Boolean debugging = false;
 	static JLabel lblElapsedTime;
 	static Player mp3player;
 	static Runnable BackgroundThread;
@@ -82,35 +83,35 @@ public class Client extends JFrame {
 					frame.setVisible(true);
 					BackgroundThread = new Runnable() {
 						public void run() {
-							try {
-								boolean temp = true;
-								while (temp == true) {
-									millis = 0;
-									millis = mp3player.getPosition();
-									hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
-											TimeUnit.MILLISECONDS.toMinutes(millis)
-													- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-											TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES
-													.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-									lblElapsedTime.setText(hms);
-								}
-							} catch (Exception e) {
-								System.out.println(e);
+							boolean temp = true;
+							while (temp == true) {
+								millis = 0;
+								millis = mp3player.getPosition();
+								hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
+										TimeUnit.MILLISECONDS.toMinutes(millis)
+												- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+										TimeUnit.MILLISECONDS.toSeconds(millis)
+												- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+								lblElapsedTime.setText(hms);
 							}
 						}
 					};
 				} catch (Exception e) {
-					e.printStackTrace();
+					if (debugging == true) {
+						System.out.println("Error(s) occured in background thread:\n");
+						e.printStackTrace();
+					}
 				}
 			}
 		});
 	}
 
 	public Client() {
+		setResizable(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Client.class.getResource("/graphics/YouMusix_Icon.png")));
 		setTitle("YouMusix \u266A");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 624, 380);
+		setBounds(100, 100, 608, 342);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -155,7 +156,10 @@ public class Client extends JFrame {
 								JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (Exception e) {
-					System.out.println(e);
+					if (debugging == true) {
+						System.out.println("Error occured while calculating MP3 stream size\n");
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -175,11 +179,29 @@ public class Client extends JFrame {
 						JOptionPane.showMessageDialog(null, "Service currently unavailable!");
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					if (debugging == true) {
+						System.out.println("Error occured while checking server status");
+						e.printStackTrace();
+					}
 				}
 			}
 		});
 		mnTools.add(mntmSeverStatus);
+
+		JMenuItem mntmToggleDebugger = new JMenuItem("Toggle Debugger");
+		mntmToggleDebugger.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (debugging == false) {
+					debugging = true;
+					JOptionPane.showMessageDialog(null,
+							"Debugger is activated.\nDebug log will be displayed in console!");
+				} else {
+					debugging = false;
+					JOptionPane.showMessageDialog(null, "Debuger is deactivated");
+				}
+			}
+		});
+		mnTools.add(mntmToggleDebugger);
 
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
@@ -338,8 +360,14 @@ public class Client extends JFrame {
 							lblAppStatus.setText("Playing...");
 							thread.start();
 							lblAppStatus.setText("Stopped");
+							if (debugging == true) {
+								System.out.println("Decoding Error(s):\n");
+								DecoderError.printStackTrace();
+							}
 						} catch (Exception e) {
-							System.out.println("Error:" + e);
+							if (debugging == true) {
+								e.printStackTrace();
+							}
 						}
 					}
 				});
@@ -351,10 +379,15 @@ public class Client extends JFrame {
 						btnPlay.setVisible(false);
 						thread.start();
 					} catch (Exception e1) {
-						System.out.println(e1);
+						if (debugging == true) {
+							e1.printStackTrace();
+						}
 					}
 				} else {
 					lblAppStatus.setText("Please enter a valid URL");
+					if (debugging == true) {
+						System.out.println("Please enter a valid URL");
+					}
 				}
 			}
 		});

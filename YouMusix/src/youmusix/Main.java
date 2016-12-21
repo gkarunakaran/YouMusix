@@ -39,7 +39,7 @@ public class Main {
 				new Client().setVisible(true);
 			}
 		} catch (Exception e) {
-			System.out.print(e);
+			System.out.print("Error(s) occured\n" + e);
 		}
 	}
 }

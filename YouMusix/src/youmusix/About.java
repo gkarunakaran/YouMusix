@@ -91,12 +91,12 @@ public class About extends JFrame {
 		lblTemporary.setForeground(Color.WHITE);
 		lblTemporary.setBounds(319, 53, 80, 25);
 		contentPane.add(lblTemporary);
-		btnGitHub.setBounds(25, 112, 183, 25);
+		btnGitHub.setBounds(25, 104, 183, 33);
 		contentPane.add(btnGitHub);
 
-		JLabel lblApplicationVersion = new JLabel("Version: Alpha Build 161119");
+		JLabel lblApplicationVersion = new JLabel("Version: Alpha Build 161121");
 		lblApplicationVersion.setFont(new Font("Dialog", Font.BOLD, 14));
-		lblApplicationVersion.setBounds(25, 72, 260, 18);
+		lblApplicationVersion.setBounds(25, 60, 260, 18);
 		contentPane.add(lblApplicationVersion);
 
 		JLabel lblDeveloper = new JLabel("Developer");
