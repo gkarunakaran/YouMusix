@@ -7,10 +7,9 @@
 * Easy to use
 * Video duration limit - Approx. 1 hour
 * Highest sound quality (Depends on Video)
+* Download stream as MP3 with ID3 tags and Album Art
 * Check MP3 stream size without downloading it
 * Saves a lot of bandwidth
-
-  More features coming soon...
 
 ## Building:
 
