@@ -63,7 +63,7 @@ public class About extends JFrame {
 	}
 
 	public About() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(About.class.getResource("/graphics/YouMusix_Icon.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(About.class.getResource("/graphics/YouMusix_Logo.png")));
 		setResizable(false);
 		setType(Type.UTILITY);
 		setTitle("About");
@@ -86,15 +86,10 @@ public class About extends JFrame {
 				}
 			}
 		});
-
-		JLabel lblTemporary = new JLabel("Temporary");
-		lblTemporary.setForeground(Color.WHITE);
-		lblTemporary.setBounds(319, 53, 80, 25);
-		contentPane.add(lblTemporary);
 		btnGitHub.setBounds(25, 104, 183, 33);
 		contentPane.add(btnGitHub);
 
-		JLabel lblApplicationVersion = new JLabel("Version: Alpha Build 161221");
+		JLabel lblApplicationVersion = new JLabel("Version: Alpha Build 161229");
 		lblApplicationVersion.setFont(new Font("Dialog", Font.BOLD, 14));
 		lblApplicationVersion.setBounds(25, 60, 260, 18);
 		contentPane.add(lblApplicationVersion);
@@ -139,7 +134,7 @@ public class About extends JFrame {
 
 		JLabel lblAppLogo = new JLabel("");
 		lblAppLogo.setIcon(new ImageIcon(About.class.getResource("/graphics/YouMusix_Logo.png")));
-		lblAppLogo.setBounds(285, 0, 150, 150);
+		lblAppLogo.setBounds(375, 12, 145, 125);
 		contentPane.add(lblAppLogo);
 
 		JLabel lblIconNotice = new JLabel(
@@ -170,7 +165,7 @@ public class About extends JFrame {
 		contentPane.add(lblIconNotice);
 
 		JLabel lblJLayerNotice = new JLabel(
-				"JLayer decoder library is used for decoding the MP3 stream which is licensed under LGPL");
+				"JLayer decoder library has been used for decoding the MP3 stream which is licensed under LGPL");
 		lblJLayerNotice.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {

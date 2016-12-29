@@ -37,8 +37,10 @@ import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -48,26 +50,34 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.imageio.ImageIO;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import javazoom.jl.player.Player;
 import javazoom.jl.decoder.JavaLayerException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 @SuppressWarnings("serial")
 public class Client extends JFrame {
 
-	JLabel lblAppStatus, lblThumbnail, lblBackground;
+	JLabel lblAppStatus, lblThumbnail, lblBackground, lblDownloadStatus;
 	String VideoID, RepeatMusic;
 	JTextField VideoURL;
 	JPanel contentPane;
-	JButton btnPlay, btnStop, btnPause, btnResume, btnRepeatDisabled, btnRepeatEnabled;
-	Thread thread;
+	JButton btnPlay, btnStop, btnPause, btnResume, btnRepeatDisabled, btnRepeatEnabled, btnDownload, btnCancelDownload,
+			btnPauseDownload, btnResumeDownload;
+	Thread thread, DownloadThread;
 	Boolean InitialURLBarClick = false;
+	JFileChooser fileChooser;
 	static Boolean debugging = false;
 	static JLabel lblElapsedTime;
 	static Player mp3player;
@@ -108,7 +118,7 @@ public class Client extends JFrame {
 
 	public Client() {
 		setResizable(false);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Client.class.getResource("/graphics/YouMusix_Icon.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Client.class.getResource("/graphics/YouMusix_Logo.png")));
 		setTitle("YouMusix \u266A");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 608, 342);
@@ -148,7 +158,7 @@ public class Client extends JFrame {
 						if (size < 0) {
 							JOptionPane.showMessageDialog(null, "Error");
 						} else {
-							JOptionPane.showMessageDialog(null, "MP3 stream size: " + size + " MB");
+							JOptionPane.showMessageDialog(null, "MP3 stream size: ~" + size + " MB");
 						}
 						conn.getInputStream().close();
 					} else {
@@ -229,6 +239,12 @@ public class Client extends JFrame {
 		contentPane.setLayout(null);
 
 		VideoURL = new JTextField();
+		VideoURL.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				btnDownload.setVisible(true);
+			}
+		});
 		VideoURL.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -261,6 +277,70 @@ public class Client extends JFrame {
 				AppSettings.Write_Repeating_the_music_is_enabled();
 			}
 		});
+
+		btnDownload = new JButton("Download");
+		btnDownload.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				DownloadThread.start();
+				btnResumeDownload.setVisible(false);
+			}
+		});
+		btnDownload.setBounds(470, 215, 120, 25);
+		contentPane.add(btnDownload);
+		btnDownload.setVisible(false);
+
+		lblDownloadStatus = new JLabel("");
+		lblDownloadStatus.setHorizontalAlignment(SwingConstants.CENTER);
+		lblDownloadStatus.setBounds(232, 257, 200, 15);
+		contentPane.add(lblDownloadStatus);
+
+		btnResumeDownload = new JButton("Resume");
+		btnResumeDownload.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
+			public void actionPerformed(ActionEvent e) {
+				DownloadThread.resume();
+				btnResumeDownload.setVisible(false);
+				btnPauseDownload.setVisible(true);
+				btnCancelDownload.setVisible(true);
+			}
+		});
+		btnResumeDownload.setBounds(470, 215, 120, 25);
+		contentPane.add(btnResumeDownload);
+		btnResumeDownload.setVisible(false);
+
+		btnPauseDownload = new JButton("Pause");
+		btnPauseDownload.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
+			public void actionPerformed(ActionEvent arg0) {
+				DownloadThread.suspend();
+				lblDownloadStatus.setText("Download Paused");
+				btnPauseDownload.setVisible(false);
+				btnResumeDownload.setVisible(true);
+				btnCancelDownload.setVisible(true);
+			}
+		});
+		btnPauseDownload.setBounds(470, 215, 120, 25);
+		contentPane.add(btnPauseDownload);
+		btnPauseDownload.setVisible(false);
+
+		btnCancelDownload = new JButton("Cancel");
+		btnCancelDownload.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DownloadThread.interrupt();
+				File file = new File(fileChooser.getSelectedFile().getAbsolutePath() + ".mp3");
+				if (file.exists() && !file.isDirectory()) {
+					file.delete();
+				}
+				btnCancelDownload.setVisible(false);
+				btnResumeDownload.setVisible(false);
+				btnPauseDownload.setVisible(false);
+				btnDownload.setVisible(true);
+				lblDownloadStatus.setText("Download Canceled");
+			}
+		});
+		btnCancelDownload.setBounds(470, 252, 120, 25);
+		contentPane.add(btnCancelDownload);
+		btnCancelDownload.setVisible(false);
 
 		lblElapsedTime = new JLabel("");
 		lblElapsedTime.setHorizontalAlignment(SwingConstants.CENTER);
@@ -330,8 +410,8 @@ public class Client extends JFrame {
 					public void run() {
 						BufferedInputStream in = null;
 						try {
-							String Server_1 = "http://youtubeinmp3.com/fetch/?video=";
-							URL Video = new URL(Server_1 + VideoURL.getText());
+							String API = "http://youtubeinmp3.com/fetch/?video=";
+							URL Video = new URL(API + VideoURL.getText());
 							String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
 							Pattern compiledPattern = Pattern.compile(pattern);
 							Matcher matcher = compiledPattern.matcher(VideoURL.getText());
@@ -488,7 +568,7 @@ public class Client extends JFrame {
 
 		lblAppStatus = new JLabel("");
 		lblAppStatus.setHorizontalAlignment(SwingConstants.CENTER);
-		lblAppStatus.setBounds(232, 240, 169, 24);
+		lblAppStatus.setBounds(232, 215, 200, 24);
 		contentPane.add(lblAppStatus);
 
 		lblBackground = new JLabel("");
@@ -507,5 +587,97 @@ public class Client extends JFrame {
 		if (RepeatMusic.equalsIgnoreCase("false")) {
 			btnRepeatDisabled.setVisible(true);
 		}
+
+		DownloadThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
+				Pattern compiledPattern = Pattern.compile(pattern);
+				Matcher matcher = compiledPattern.matcher(VideoURL.getText());
+				if (matcher.find()) {
+					btnDownload.setVisible(false);
+					JFrame parentFrame = new JFrame();
+					fileChooser = new JFileChooser();
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("MP3 Files", "mp3");
+					fileChooser.setFileFilter(filter);
+					fileChooser.setDialogTitle("Save as a MP3 file");
+					int userSelection = fileChooser.showSaveDialog(parentFrame);
+					if (userSelection == JFileChooser.APPROVE_OPTION) {
+						lblDownloadStatus.setText("Starting download...");
+						BufferedInputStream in = null;
+						FileOutputStream out = null;
+						try {
+							URL url = new URL("https://youtubeinmp3.com/fetch/?video=" + VideoURL.getText());
+							URLConnection conn = url.openConnection();
+							int bytesize = conn.getContentLength();
+							float mbsize = bytesize / 1024 / 1024;
+							if (bytesize < 0) {
+								lblDownloadStatus.setText("Error occured! Try again!");
+								if (debugging == true) {
+									System.out.println("An error occured while downloading!");
+								}
+								DownloadThread.interrupt();
+								btnDownload.setVisible(true);
+							} else {
+								lblDownloadStatus.setText("File Size: ~" + mbsize + " MB");
+								btnCancelDownload.setVisible(true);
+								btnPauseDownload.setVisible(true);
+							}
+							in = new BufferedInputStream(url.openStream());
+							out = new FileOutputStream(fileChooser.getSelectedFile().getAbsolutePath() + ".mp3");
+							byte data[] = new byte[1024];
+							int count;
+							float sumCount = 0;
+
+							while ((count = in.read(data, 0, 1024)) != -1) {
+								out.write(data, 0, count);
+								sumCount += count;
+								int percentage = (int) (sumCount / bytesize * 100.0);
+								if (bytesize > 0) {
+									lblDownloadStatus.setText("Downloading: " + percentage + "%");
+									if (percentage == 100) {
+										lblDownloadStatus.setText("Download Completed");
+										DownloadThread.interrupt();
+										btnDownload.setVisible(true);
+										btnPauseDownload.setVisible(false);
+										btnResumeDownload.setVisible(false);
+										btnCancelDownload.setVisible(false);
+									}
+								}
+							}
+
+						} catch (MalformedURLException e1) {
+							if (debugging == true) {
+								e1.printStackTrace();
+							}
+						} catch (IOException e2) {
+							if (debugging == true) {
+								e2.printStackTrace();
+							}
+						} finally {
+							if (in != null)
+								try {
+									in.close();
+									btnDownload.setVisible(true);
+								} catch (IOException e3) {
+									if (debugging == true) {
+										e3.printStackTrace();
+									}
+								}
+							if (out != null)
+								try {
+									out.close();
+								} catch (IOException e4) {
+									if (debugging == true) {
+										e4.printStackTrace();
+									}
+								}
+						}
+					}
+				} else {
+					lblDownloadStatus.setText("Please enter a valid URL");
+				}
+			}
+		});
 	}
 }
