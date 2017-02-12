@@ -25,4 +25,4 @@ If you are using UNIX-Like OS (GNU/Linux, MacOS, BSD, etc.) make sure the JAR fi
 
 * Elasped Duration is known to work only when running project within IDE and does not work in exported runnable JAR.
 * Downloads cannot be cancelled.
-* Due to limitations imposed by server, sometimes downloading and streaming won't work. Try using another YouTube url or quit the application and relaunch it.
+* Due to limitations imposed by server, sometimes downloading/streaming won't work. Try using another YouTube url or quit the application and relaunch it.
