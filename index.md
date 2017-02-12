@@ -15,7 +15,6 @@
 
 1. Add all the jar files present in lib directory to class path or build path
 2. Export project as runnable JAR
-3. Make sure the JAR file is set as executable if running Unix-like OS
 
 If you are using UNIX-Like OS (GNU/Linux, MacOS, BSD, etc.) make sure the JAR file is set as executable before launching it for the first time on your system.
 
