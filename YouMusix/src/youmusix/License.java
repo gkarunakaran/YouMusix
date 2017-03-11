@@ -55,9 +55,9 @@ public class License extends JFrame {
 
 	public License() {
 		setType(Type.UTILITY);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(License.class.getResource("/graphics/YouMusix_Icon.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(License.class.getResource("/graphics/YouMusix_Logo.png")));
 		setResizable(false);
-		setTitle("YouMusix License");
+		setTitle("YouMusix \u266A License");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 600, 471);
 		contentPane = new JPanel();

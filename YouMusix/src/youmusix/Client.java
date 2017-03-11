@@ -34,10 +34,17 @@ import java.awt.image.BufferedImage;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.awt.Desktop;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -225,14 +232,42 @@ public class Client extends JFrame {
 		});
 		mnHelp.add(mntmAbout);
 
-		JMenuItem mntmLicense = new JMenuItem("License");
+		JMenu mnNewMenu = new JMenu("License");
+		mnHelp.add(mnNewMenu);
+
+		JMenuItem mntmCommonioLicense = new JMenuItem("Commons-io License");
+		mntmCommonioLicense.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Desktop.getDesktop().browse(new URL("http://www.apache.org/licenses/").toURI());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		mnNewMenu.add(mntmCommonioLicense);
+
+		JMenuItem mntmJlayerLicense = new JMenuItem("JLayer License");
+		mntmJlayerLicense.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Desktop.getDesktop().browse(new URL("http://www.javazoom.net/javalayer/about.html").toURI());
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		mnNewMenu.add(mntmJlayerLicense);
+
+		JMenuItem mntmLicense = new JMenuItem("YouMusix License");
+		mnNewMenu.add(mntmLicense);
 		mntmLicense.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent arg0) {
 				License obj = new License();
 				obj.setVisible(true);
 			}
 		});
-		mnHelp.add(mntmLicense);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -285,6 +320,22 @@ public class Client extends JFrame {
 				btnResumeDownload.setVisible(false);
 			}
 		});
+
+		JButton btnClearURL = new JButton("Clear");
+		btnClearURL.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (InitialURLBarClick == false) {
+					VideoURL.setText("");
+					InitialURLBarClick = true;
+				}
+			}
+		});
+		btnClearURL.setBounds(525, 0, 75, 30);
+		contentPane.add(btnClearURL);
+
+		JLabel lblStreamTitle = new JLabel("");
+		lblStreamTitle.setBounds(168, 137, 420, 15);
+		contentPane.add(lblStreamTitle);
 		btnDownload.setBounds(470, 215, 120, 25);
 		contentPane.add(btnDownload);
 		btnDownload.setVisible(false);
@@ -381,7 +432,7 @@ public class Client extends JFrame {
 		contentPane.add(lblThumbnail);
 		VideoURL.setForeground(Color.GRAY);
 		VideoURL.setText("Enter YouTube video URL, ex. https://www.youtube.com/watch?v=EP625xQIGzs");
-		VideoURL.setBounds(0, 0, 608, 30);
+		VideoURL.setBounds(0, 0, 529, 30);
 		contentPane.add(VideoURL);
 		VideoURL.setColumns(10);
 
@@ -417,6 +468,12 @@ public class Client extends JFrame {
 							Matcher matcher = compiledPattern.matcher(VideoURL.getText());
 							if (matcher.find()) {
 								VideoID = matcher.group();
+								@SuppressWarnings("deprecation")
+								JSONObject jo = (JSONObject) new JSONTokener(IOUtils.toString(
+										new URL("http://www.youtubeinmp3.com/fetch/?format=JSON&video=" + Video)))
+												.nextValue();
+								lblStreamTitle.setText(jo.getString("title"));
+								setTitle("YouMusix \u266A - " + jo.getString("title"));
 								URL thumbnailurl = new URL("https://i1.ytimg.com/vi/" + VideoID + "/default.jpg");
 								BufferedImage image = ImageIO.read(thumbnailurl);
 								lblThumbnail.setIcon(new ImageIcon(image));
@@ -560,6 +617,8 @@ public class Client extends JFrame {
 				mp3player.close();
 				thread.interrupt();
 				btnStop.setVisible(false);
+				setTitle("YouMusix \u266A");
+				lblStreamTitle.setText("");
 				lblAppStatus.setText("Stopped");
 			}
 		});

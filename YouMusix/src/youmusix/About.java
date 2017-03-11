@@ -68,14 +68,14 @@ public class About extends JFrame {
 		setType(Type.UTILITY);
 		setTitle("About");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 540, 260);
+		setBounds(100, 100, 540, 309);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(238, 238, 238));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JButton btnGitHub = new JButton("GitHub");
+		JButton btnGitHub = new JButton("Access the source code");
 		btnGitHub.setToolTipText("Access YouMusix github repository");
 		btnGitHub.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -86,44 +86,44 @@ public class About extends JFrame {
 				}
 			}
 		});
-		btnGitHub.setBounds(25, 104, 183, 33);
+												
+														JLabel lblMyname = new JLabel("Karanvir Singh");
+														lblMyname.addMouseListener(new MouseAdapter() {
+															@Override
+															public void mouseClicked(MouseEvent e) {
+																try {
+																	Desktop.getDesktop().browse(new URL("https://twitter.com/iamkaranvir").toURI());
+																} catch (Exception e1) {
+																	e1.printStackTrace();
+																}
+															}
+
+															@Override
+															public void mouseEntered(MouseEvent e) {
+																lblMyname.setForeground(Color.BLUE);
+															}
+
+															@Override
+															public void mouseExited(MouseEvent e) {
+																lblMyname.setForeground(Color.RED);
+															}
+														});
+																
+																		JLabel lblDeveloper = new JLabel("Developer");
+																		lblDeveloper.setFont(new Font("Dialog", Font.BOLD, 16));
+																		lblDeveloper.setBounds(25, 12, 338, 24);
+																		contentPane.add(lblDeveloper);
+														
+																JLabel lblApplicationVersion = new JLabel("Version: Experimental build 170311");
+																lblApplicationVersion.setFont(new Font("Dialog", Font.BOLD, 14));
+																lblApplicationVersion.setBounds(25, 60, 338, 18);
+																contentPane.add(lblApplicationVersion);
+														lblMyname.setForeground(Color.RED);
+														lblMyname.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 16));
+														lblMyname.setBounds(25, 36, 338, 24);
+														contentPane.add(lblMyname);
+		btnGitHub.setBounds(25, 92, 286, 33);
 		contentPane.add(btnGitHub);
-
-		JLabel lblApplicationVersion = new JLabel("Version: Alpha Build 161229");
-		lblApplicationVersion.setFont(new Font("Dialog", Font.BOLD, 14));
-		lblApplicationVersion.setBounds(25, 60, 260, 18);
-		contentPane.add(lblApplicationVersion);
-
-		JLabel lblDeveloper = new JLabel("Developer");
-		lblDeveloper.setFont(new Font("Dialog", Font.BOLD, 16));
-		lblDeveloper.setBounds(25, 12, 228, 24);
-		contentPane.add(lblDeveloper);
-
-		JLabel lblMyname = new JLabel("Karanvir Singh");
-		lblMyname.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				try {
-					Desktop.getDesktop().browse(new URL("https://twitter.com/iamkaranvir").toURI());
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				lblMyname.setForeground(Color.BLUE);
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				lblMyname.setForeground(Color.RED);
-			}
-		});
-		lblMyname.setForeground(Color.RED);
-		lblMyname.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 16));
-		lblMyname.setBounds(25, 36, 228, 24);
-		contentPane.add(lblMyname);
 
 		JLabel lblGoogle = new JLabel(
 				"YouTube, is trademark of Google, Inc. We are not affliated with Google, Inc. in any way.");
@@ -190,5 +190,17 @@ public class About extends JFrame {
 		lblJLayerNotice.setFont(new Font("Dialog", Font.PLAIN, 10));
 		lblJLayerNotice.setBounds(25, 149, 495, 24);
 		contentPane.add(lblJLayerNotice);
+		
+		JLabel lblRightInYourFace = new JLabel("Q. Having problems with playback/streaming/shuttering sound?");
+		lblRightInYourFace.setBounds(25, 223, 495, 15);
+		contentPane.add(lblRightInYourFace);
+		
+		JLabel lblGoComplainTo = new JLabel("A. Complain to webmaster@youtubeinmp3.com as their API is buggy.");
+		lblGoComplainTo.setBounds(25, 238, 495, 15);
+		contentPane.add(lblGoComplainTo);
+		
+		JLabel lblComplainToYoutubeinmpcom = new JLabel("     It produces random errors while downloading MP3 stream! >:/");
+		lblComplainToYoutubeinmpcom.setBounds(25, 250, 495, 15);
+		contentPane.add(lblComplainToYoutubeinmpcom);
 	}
 }

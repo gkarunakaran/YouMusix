@@ -9,10 +9,10 @@ A YouTube to MP3 player. Enter a YouTube video URL and stream or download it as 
 
 * Easy to use
 * Video duration limit - Approx. 1 hour
-* Highest sound quality (Depends on Video)
-* Download stream as MP3 with ID3 tags and Album Art
+* Highest sound quality (usually 256 kbps, but depends on video quality)
+* Download stream as MP3 with IDv3 tags and album art
 * Check MP3 stream size without downloading it
-* Saves a lot of bandwidth
+* Save a lot of bandwidth
 
 ## Building:
 
@@ -25,4 +25,7 @@ If you are using UNIX-Like OS (GNU/Linux, MacOS, BSD, etc.) make sure the JAR fi
 
 * Elasped Duration is known to work only when running project within IDE and does not work in exported runnable JAR.
 * Downloads cannot be cancelled.
-* Due to limitations imposed by server, sometimes downloading/streaming won't work. Try using another YouTube url or quit the application and relaunch it.
+* Due to limitations imposed by server, sometimes downloading/streaming won't work. Try using another YouTube URL or click stop and play button respectively 4-5 times or even quit the application and relaunch it.
+* If you get shuttering sound while streaming, it is due to slow internet connection, try pressing pause button and wait for few seconds to let the stream buffer and then finally press the play button.
+
+### You can help me by fixing these issues and introducing more features by forking the repository and submitting a pull request.
