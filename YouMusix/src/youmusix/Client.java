@@ -257,6 +257,19 @@ public class Client extends JFrame {
 				}
 			}
 		});
+
+		JMenuItem mntmJSONjavaLicense = new JMenuItem("JSON-java License");
+		mntmJSONjavaLicense.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Desktop.getDesktop().browse(
+							new URL("https://raw.githubusercontent.com/stleary/JSON-java/master/LICENSE").toURI());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		mnNewMenu.add(mntmJSONjavaLicense);
 		mnNewMenu.add(mntmJlayerLicense);
 
 		JMenuItem mntmLicense = new JMenuItem("YouMusix License");

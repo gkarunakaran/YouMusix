@@ -92,7 +92,7 @@ public class About extends JFrame {
 															@Override
 															public void mouseClicked(MouseEvent e) {
 																try {
-																	Desktop.getDesktop().browse(new URL("https://twitter.com/iamkaranvir").toURI());
+																	Desktop.getDesktop().browse(new URL("https://kvsjxd.github.io/").toURI());
 																} catch (Exception e1) {
 																	e1.printStackTrace();
 																}
