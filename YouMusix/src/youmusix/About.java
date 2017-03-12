@@ -68,7 +68,7 @@ public class About extends JFrame {
 		setType(Type.UTILITY);
 		setTitle("About");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 540, 309);
+		setBounds(100, 100, 540, 335);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(238, 238, 238));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -114,7 +114,7 @@ public class About extends JFrame {
 																		lblDeveloper.setBounds(25, 12, 338, 24);
 																		contentPane.add(lblDeveloper);
 														
-																JLabel lblApplicationVersion = new JLabel("Version: Experimental build 170311");
+																JLabel lblApplicationVersion = new JLabel("Version: Experimental build 170312");
 																lblApplicationVersion.setFont(new Font("Dialog", Font.BOLD, 14));
 																lblApplicationVersion.setBounds(25, 60, 338, 18);
 																contentPane.add(lblApplicationVersion);
@@ -165,7 +165,7 @@ public class About extends JFrame {
 		contentPane.add(lblIconNotice);
 
 		JLabel lblJLayerNotice = new JLabel(
-				"JLayer decoder library has been used for decoding the MP3 stream which is licensed under LGPL");
+				"JLayer decoder library has been used for decoding the MP3 stream which is licensed under LGPL.");
 		lblJLayerNotice.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -195,12 +195,16 @@ public class About extends JFrame {
 		lblRightInYourFace.setBounds(25, 223, 495, 15);
 		contentPane.add(lblRightInYourFace);
 		
-		JLabel lblGoComplainTo = new JLabel("A. Complain to webmaster@youtubeinmp3.com as their API is buggy.");
+		JLabel lblGoComplainTo = new JLabel("A. Complain at webmaster@youtubeinmp3.com as their API is buggy.");
 		lblGoComplainTo.setBounds(25, 238, 495, 15);
 		contentPane.add(lblGoComplainTo);
 		
 		JLabel lblComplainToYoutubeinmpcom = new JLabel("     It produces random errors while downloading MP3 stream! >:/");
 		lblComplainToYoutubeinmpcom.setBounds(25, 250, 495, 15);
 		contentPane.add(lblComplainToYoutubeinmpcom);
+		
+		JLabel lblStreamsSourceBy = new JLabel("* Streams are provided by youtubeinmp3.com");
+		lblStreamsSourceBy.setBounds(25, 276, 495, 15);
+		contentPane.add(lblStreamsSourceBy);
 	}
 }

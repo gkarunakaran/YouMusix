@@ -272,6 +272,18 @@ public class Client extends JFrame {
 		mnNewMenu.add(mntmJSONjavaLicense);
 		mnNewMenu.add(mntmJlayerLicense);
 
+		JMenuItem mntmMaterialIconsLicense = new JMenuItem("Material Icons License");
+		mntmMaterialIconsLicense.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Desktop.getDesktop().browse(new URL("https://material.io/icons/").toURI());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		mnNewMenu.add(mntmMaterialIconsLicense);
+
 		JMenuItem mntmLicense = new JMenuItem("YouMusix License");
 		mnNewMenu.add(mntmLicense);
 		mntmLicense.addActionListener(new ActionListener() {
