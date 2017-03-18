@@ -349,10 +349,8 @@ public class Client extends JFrame {
 		JButton btnClearURL = new JButton("Clear");
 		btnClearURL.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if (InitialURLBarClick == false) {
-					VideoURL.setText("");
-					InitialURLBarClick = true;
-				}
+				VideoURL.setText("");
+				InitialURLBarClick = true;
 			}
 		});
 		btnClearURL.setBounds(525, 0, 75, 30);
@@ -644,6 +642,7 @@ public class Client extends JFrame {
 				btnStop.setVisible(false);
 				setTitle("YouMusix \u266A");
 				lblStreamTitle.setText("");
+				lblThumbnail.setIcon(null);
 				lblAppStatus.setText("Stopped");
 			}
 		});
