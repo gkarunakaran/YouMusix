@@ -350,7 +350,9 @@ public class Client extends JFrame {
 		btnClearURL.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				VideoURL.setText("");
-				InitialURLBarClick = true;
+				if (InitialURLBarClick == false) {
+					InitialURLBarClick = true;
+				}
 			}
 		});
 		btnClearURL.setBounds(525, 0, 75, 30);
