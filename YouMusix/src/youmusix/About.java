@@ -75,8 +75,8 @@ public class About extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JButton btnGitHub = new JButton("Access the source code");
-		btnGitHub.setToolTipText("Access YouMusix github repository");
+		JButton btnGitHub = new JButton("Fork me on GitHub");
+		btnGitHub.setToolTipText("Access YouMusix repository on GitHub");
 		btnGitHub.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -114,7 +114,7 @@ public class About extends JFrame {
 																		lblDeveloper.setBounds(25, 12, 338, 24);
 																		contentPane.add(lblDeveloper);
 														
-																JLabel lblApplicationVersion = new JLabel("Version: Experimental build 170312");
+																JLabel lblApplicationVersion = new JLabel("Version: Experimental build 170409");
 																lblApplicationVersion.setFont(new Font("Dialog", Font.BOLD, 14));
 																lblApplicationVersion.setBounds(25, 60, 338, 18);
 																contentPane.add(lblApplicationVersion);
@@ -122,7 +122,7 @@ public class About extends JFrame {
 														lblMyname.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 16));
 														lblMyname.setBounds(25, 36, 338, 24);
 														contentPane.add(lblMyname);
-		btnGitHub.setBounds(25, 92, 286, 33);
+		btnGitHub.setBounds(25, 92, 175, 35);
 		contentPane.add(btnGitHub);
 
 		JLabel lblGoogle = new JLabel(
@@ -199,11 +199,11 @@ public class About extends JFrame {
 		lblGoComplainTo.setBounds(25, 238, 495, 15);
 		contentPane.add(lblGoComplainTo);
 		
-		JLabel lblComplainToYoutubeinmpcom = new JLabel("     It produces random errors while downloading MP3 stream! >:/");
+		JLabel lblComplainToYoutubeinmpcom = new JLabel("     It produces random errors while downloading MP3 stream!");
 		lblComplainToYoutubeinmpcom.setBounds(25, 250, 495, 15);
 		contentPane.add(lblComplainToYoutubeinmpcom);
 		
-		JLabel lblStreamsSourceBy = new JLabel("* Streams are provided by youtubeinmp3.com");
+		JLabel lblStreamsSourceBy = new JLabel("* Streams are provided by youtubeinmp3.com/");
 		lblStreamsSourceBy.setBounds(25, 276, 495, 15);
 		contentPane.add(lblStreamsSourceBy);
 	}

@@ -211,10 +211,10 @@ public class Client extends JFrame {
 				if (debugging == false) {
 					debugging = true;
 					JOptionPane.showMessageDialog(null,
-							"Debugger is activated.\nDebug log will be displayed in console!");
+							"Debugger is now activated.\nDebug log will be displayed in console!\nSo, make sure that you are running application from terminal or cmd!");
 				} else {
 					debugging = false;
-					JOptionPane.showMessageDialog(null, "Debugger is deactivated");
+					JOptionPane.showMessageDialog(null, "Debugger is now deactivated");
 				}
 			}
 		});
